@@ -34,8 +34,8 @@ public final class UsbCameraServer extends Handler {
     private static final boolean DEBUG = true;
     private static final String TAG = UsbCameraServer.class.getSimpleName();
 
-    private static final int DEFAULT_WIDTH = 1280;
-    private static final int DEFAULT_HEIGHT = 720;
+    private static final int DEFAULT_WIDTH = 640;
+    private static final int DEFAULT_HEIGHT = 480;
 
     private int mFrameWidth = DEFAULT_WIDTH, mFrameHeight = DEFAULT_HEIGHT;
 

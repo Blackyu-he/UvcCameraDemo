@@ -31,8 +31,8 @@ public class UsbCameraModule {
     public static UsbCameraModule mInstance = null;
     public static Context mContext = null;
 
-    private static int DEFAULT_WIDTH = 1280;
-    private static int DEFAULT_HEIGHT = 720;
+    private static int DEFAULT_WIDTH = 640;
+    private static int DEFAULT_HEIGHT = 480;
 
     private USBMonitor mUSBMonitor;
     private UsbCameraServer mUsbCameraServer;
@@ -111,15 +111,25 @@ public class UsbCameraModule {
         Log.v(TAG,"---doConnectUsbCamera(); mUsbCameraServer:"+mUsbCameraServer);
 
         if(mUsbCameraServer == null) {
-            mUsbCameraServer = UsbCameraServer.createServer(mContext, ctrlBlock, vendorId, productId);
-            mUsbCameraServer.setUsbCameraFrameCallback(mFrameCallback);
+            try {
+                mUsbCameraServer = UsbCameraServer.createServer(mContext, ctrlBlock, vendorId, productId);
+                mUsbCameraServer.setUsbCameraFrameCallback(mFrameCallback);
 
-            mUsbCameraServer.resize(MyConstants.DEFAULT_USB_CAM_WIDTH, MyConstants.DEFAULT_USB_CAM_HEIGHT);
-            if (mUSBMonitor != null && mUSBMonitor.isRegistered()) {
-                final List<UsbDevice> list = mUSBMonitor.getDeviceList();
-                if (list.size() > 0 && mUsbCameraServer != null) {
-                    mUsbCameraServer.connect();
+                mUsbCameraServer.resize(MyConstants.DEFAULT_USB_CAM_WIDTH, MyConstants.DEFAULT_USB_CAM_HEIGHT);
+                if (mUSBMonitor != null && mUSBMonitor.isRegistered()) {
+                    final List<UsbDevice> list = mUSBMonitor.getDeviceList();
+                    if (list.size() > 0 && mUsbCameraServer != null) {
+                        mUsbCameraServer.connect();
+                    }
                 }
+            } catch (SecurityException e) {
+                Log.e(TAG, "Permission denied:" + e.getMessage());
+                mUsbCamState = MyConstants.UsbCamState.ERROR;
+                mUsbCameraServer = null;
+            } catch (Exception e) {
+                Log.e(TAG, "Create server failed:" + e.getMessage());
+                mUsbCamState = MyConstants.UsbCamState.ERROR;
+                mUsbCameraServer = null;
             }
         }
     }
